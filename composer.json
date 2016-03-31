@@ -1,0 +1,14 @@
+{
+    "require": {
+        "silex/silex": "@stable",
+        "swiftmailer/swiftmailer": "^5.4",
+        "twig/twig": "^1.24"
+    },
+    "autoload": {
+        "psr-4": {
+            "Mailserver\\": "src/",
+            "Mailserver\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {}
+}

@@ -1,0 +1,15 @@
+<phpunit bootstrap="tests/bootstrap.php">
+	<filter>
+	  <whitelist processUncoveredFilesFromWhitelist="true">
+	    <directory suffix=".php">tests</directory>
+	  </whitelist>
+	</filter>
+  <logging>
+    <log type="coverage-clover" target="logs/clover.xml"/>
+  </logging>
+  <testsuites>
+    <testsuite name="PsComissionManager">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+</phpunit>
