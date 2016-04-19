@@ -32,9 +32,11 @@ $app->post('/change_password', function(Request $request) use ($app) {
 	if (empty($app['session']->get('signin_domain')))
 		return $app->redirect('/login');
 
-	$email = $request->get('email');
-	$password = $request->get('password1');
-	$repeat = $request->get('password2');
+	$changePassword = $request->get('changePassword');
+
+	$email = $changePassword['email'];
+	$password = $changePassword['password1'];
+	$repeat = $changePassword['password2'];
 
 	// domain must be the same as logged in session domain
 	$emailDomain = substr($email, strpos($email, '@') + 1);
