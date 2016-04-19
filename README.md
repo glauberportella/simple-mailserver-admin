@@ -2,6 +2,8 @@
 
 A simple Postfix + Dovecot + MySQL interface to manage mailboxes.
 
+The e-mail system must be based on [this Linode article](https://www.linode.com/docs/email/email-with-postfix-dovecot-and-mysql)
+
 # Functions
 
 Actually only change email password.

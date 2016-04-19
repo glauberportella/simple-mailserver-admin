@@ -20,7 +20,7 @@ $app['debug'] = true;
 // Initialize Connection settings
 Connection::setConfig(array(
     'host' => 'localhost',
-    'db' => 'test',
+    'db' => 'mailserver',
     'user' => 'root',
     'password' => ''
 ));
@@ -107,7 +107,14 @@ $app->post('/login_check', function(Request $request) use ($app) {
     $admin = $admins[0];
     $salt = $admin['salt'];
     $password = $request->get('password');
-    if (md5($salt.$password) != $admin['pwd']) {
+
+    // encrypt input to test with admin password
+    $sql = 'SELECT ENCRYPT(?, `password`) AS pwd FROM '.User::$tableName.' WHERE email = ?';
+    $stmt = $app['db']->prepare($sql);
+    $stmt->execute(array($password, $email));
+    $pwd = $stmt->fetchColumn();
+
+    if ($pwd != $admin['pwd']) {
     	$app['session']->getFlashBag()->add('error', 'Acesso negado. Senha incorreta.');
     	return $app->redirect('/login');
     }
