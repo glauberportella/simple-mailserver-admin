@@ -113,7 +113,6 @@ $app->post('/login_check', function(Request $request) use ($app) {
     }
 
     $admin = $admins[0];
-    $salt = $admin['salt'];
     $password = $request->get('password');
 
     // encrypt input to test with admin password
@@ -122,7 +121,7 @@ $app->post('/login_check', function(Request $request) use ($app) {
     $stmt->execute(array($password, $email));
     $pwd = $stmt->fetchColumn();
 
-    if ($pwd != $admin['pwd']) {
+    if ($pwd != $admin['password']) {
     	$app['session']->getFlashBag()->add('error', 'Acesso negado. Senha incorreta.');
     	return $app->redirect('/login');
     }
