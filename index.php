@@ -29,12 +29,20 @@ $app['db'] = Connection::getInstance();
 $app['session']->start();
 
 $app->post('/change_password', function(Request $request) use ($app) {
-	if (empty($app['session']->get('admin_id')))
+	if (empty($app['session']->get('signin_domain')))
 		return $app->redirect('/login');
 
 	$email = $request->get('email');
 	$password = $request->get('password1');
 	$repeat = $request->get('password2');
+
+	// domain must be the same as logged in session domain
+	$emailDomain = substr($email, strpos($email, '@') + 1);
+	if ($emailDomain != $app['session']->get('signin_domain')) {
+		return $app['twig']->render('index.html.twig', array(
+			'error' => 'Você não tem direito de acesso ao e-mail informado para troca de senha.'
+		));
+	}
 	
 	if ($password != $repeat) {
 		// return informando que senhas nao coincide
@@ -82,7 +90,7 @@ $app->get('/login', function() use ($app) {
 });
 
 $app->get('/logout', function() use ($app) {
-	$app['session']->remove('admin_id');
+	$app['session']->remove('signin_domain');
 	$app['session']->clear();
 	return $app->redirect('/login');
 });
@@ -91,7 +99,7 @@ $app->post('/login_check', function(Request $request) use ($app) {
 
 	$email = $request->get('email');
 
-	$repository = new Repository($app['db'], '\Mailserver\Model\Admin');
+	$repository = new Repository($app['db'], '\Mailserver\Model\User');
 
 	$conditions = array(
 		'email' => $email
@@ -119,13 +127,14 @@ $app->post('/login_check', function(Request $request) use ($app) {
     	return $app->redirect('/login');
     }
 
-    $app['session']->set('admin_id', $admin['id']);
+    $signinDomain = substr($admin['email'], strpos($admin['email'], '@') + 1);
+    $app['session']->set('signin_domain', $signinDomain);
     return $app->redirect('/');
 });
 
 $app->get('/', function() use ($app) {
 
-	if (empty($app['session']->get('admin_id')))
+	if (empty($app['session']->get('signin_domain')))
 		return $app->redirect('/login');
 
 	return $app['twig']->render('index.html.twig');
